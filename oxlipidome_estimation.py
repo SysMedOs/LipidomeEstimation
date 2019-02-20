@@ -16,7 +16,7 @@ class TheoOxLipidome(object):
     """
     Calculate total number of oxLipid from given list of fatty acids.
     Python representation of all equations in Figure 1 in corresponding publication.
-    Default values can be modified to calculate user specific oxlipidome.
+    Default values can be modified to calculate user specific unoxlipidome.
     The predicted number refer to the unique combinations of modification types and numbers.
     It can be modified to predict number of all site specific species by using site_specific=True.
     This will use a modified permutation algorithm to make all modifications repeatable at all sites
@@ -237,7 +237,7 @@ class TheoOxLipidome(object):
         :type site: str
         :param site_specific: set to False to use combinations only. set to True to generate all site specific species
         :type site_specific: bool
-        :return: Number oxLipids with call FA chain got oxidation T[all]_ox
+        :return: Number oxLipids with all FA chain got oxidation T[all]_ox
         :rtype: int
         """
         tot_fa_ox = self.get_all_oxfa(site=site, site_specific=site_specific)  # Number of oxFA F_ox
@@ -297,7 +297,8 @@ class TheoOxLipidome(object):
                                # 3 oxFA on sn1 + sn3 + sn4 / sn1 + sn2 + sn4 of CL
                                + (tot_fa_ox * self.f * tot_fa_ox * tot_fa_ox)
                                # 4 oxFA on all sn of CL
-                               + (tot_fa_ox**4)
+                               + ((comb(tot_fa_ox, 2) + tot_fa_ox)
+                                  * (comb(tot_fa_ox, 2) + tot_fa_ox) - tot_fa_ox)
                                )
                 if len(self.x_dct['x4']) - 1 > 0:
                     tox_all_ox += (len(self.x_dct['x4']) - 1) * (tot_fa_opt**4 - self.f**4)  # Other Lipid with 4 FA
